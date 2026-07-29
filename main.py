@@ -3,13 +3,12 @@ from discord.ext import commands
 import os
 import asyncio
 import logging
+from dotenv import load_dotenv
 from database import Database
 
-# Logging Yapılandırması
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+load_dotenv()
 
-# BOT TOKEN
-BOT_TOKEN = "MTUzMTk4NTMzMjY2MzQ0DUyMg.GwHndu.UqqJvcLfJb4EwNqTEmy4ftKc3oy21k0JksLDiY"
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class TournamentBot(commands.Bot):
     def __init__(self):
@@ -22,11 +21,9 @@ class TournamentBot(commands.Bot):
         self.db = Database()
 
     async def setup_hook(self):
-        # 1. Veritabanını İlklendir
         await self.db.init_db()
         logging.info("SQLite Veritabanı ilklendirildi.")
 
-        # 2. Cog Modüllerini Yükle
         initial_extensions = [
             'cogs.temp_voice',
             'cogs.ticket',
@@ -34,7 +31,6 @@ class TournamentBot(commands.Bot):
             'cogs.autorole',
             'cogs.tournament'
         ]
-
         for ext in initial_extensions:
             try:
                 await self.load_extension(ext)
@@ -42,7 +38,6 @@ class TournamentBot(commands.Bot):
             except Exception as e:
                 logging.error(f"Modül yükleme hatası [{ext}]: {e}")
 
-        # 3. Slash Komutlarını Discord API ile Senkronize Et
         try:
             synced = await self.tree.sync()
             logging.info(f"Slash komutları senkronize edildi: {len(synced)} komut aktif.")
@@ -58,8 +53,8 @@ class TournamentBot(commands.Bot):
         await self.change_presence(status=discord.Status.online, activity=activity)
 
 async def main():
-    token = BOT_TOKEN or os.getenv("DISCORD_BOT_TOKEN")
-    
+    token = os.getenv("DISCORD_BOT_TOKEN")
+
     if not token or token.strip() == "":
         logging.error("HATA: BOT_TOKEN girilmemiş!")
         return
