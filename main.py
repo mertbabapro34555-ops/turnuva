@@ -11,8 +11,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 load_dotenv()
 
-TOKEN = os.getenv("DISCORD_BOT_TOKEN")
-
 class TournamentBot(commands.Bot):
     def __init__(self):
         intents = discord.Intents.all()
@@ -60,14 +58,16 @@ class TournamentBot(commands.Bot):
         await self.change_presence(status=discord.Status.online, activity=activity)
 
 async def main():
-    if not TOKEN or TOKEN == "BURAYA_BOT_TOKENINIZI_YAZIN":
-        print("❌ HATA: .env dosyasında DISCORD_BOT_TOKEN tanımlı değil!")
-        print("Lütfen .env dosyasını açıp Discord Developer Portal'dan aldığınız Bot Token'ınızı yapıştırın.")
+    # Token'ı fonksiyon içinde dinamik oku (Bulut sunucular için)
+    token = os.getenv("DISCORD_BOT_TOKEN")
+    
+    if not token or token == "BURAYA_BOT_TOKENINIZI_YAZIN":
+        logging.error("HATA: DISCORD_BOT_TOKEN bulunamadı!")
         return
 
     bot = TournamentBot()
     async with bot:
-        await bot.start(TOKEN)
+        await bot.start(token)
 
 if __name__ == "__main__":
     asyncio.run(main())
