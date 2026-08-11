@@ -42,7 +42,7 @@ class TournamentBot(commands.Bot):
         logging.info(f"Bot Başarıyla Giriş Yaptı: {self.user} (ID: {self.user.id})")
         activity = discord.Activity(
             type=discord.ActivityType.watching,
-            name="1v1 Turnuvalar & Sunucu Güvenliği | /turnuva-olustur"
+            name="discord.gg/mcpeak"
         )
         await self.change_presence(status=discord.Status.online, activity=activity)
 async def main():
